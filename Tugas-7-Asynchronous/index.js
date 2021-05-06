@@ -6,21 +6,22 @@ var books = [
     {name: 'Kalkulus', timeSpent: 4000},
     {name: 'komik', timeSpent: 1000}
 ]
-const b = (book) => {
-    setTimeout(() => {
-        for(i = 0; i < book.length; i++){
-        console.log(book[i]);
-        }
-    }, 1000)
-  }
 
-  const getPosts = () => {
-    setTimeout(() => {
-      books.forEach(post => {
-        return post
+  // const getPosts = () => {
+  //   setTimeout(() => {
+  //     books.forEach(post => {
+  //       return post
+  //     })
+  //   }, 1000)
+  // }
+
+const time = 10000
+readBooks(time, books[0], (response) => {
+  readBooks(response, books[1], (response2) => {
+    readBooks(response2, books[2], (response3) => {
+      readBooks(response3, books[3], (response4) => {
+        return
       })
-    }, 1000)
-  }
-
-
-readBooks(10000, ...books, getPosts);
+    })
+  })
+});
