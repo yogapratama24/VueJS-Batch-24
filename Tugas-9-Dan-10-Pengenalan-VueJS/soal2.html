@@ -12,18 +12,20 @@
         width: 20px;
         background-color: grey;
         text-align: center;
+        cursor: pointer;
       }
   </style>
 </head>
 <body>
   <div class="container">
-      <form @submit.prevent="submitForm()">
-      <h4 class="box">+</h4>
-      <h2>{{title}}</h2>
-      <h4 class="box">-</h4>
-          <textarea v-model="title"></textarea>
-          <input type="submit" v-model="title" value="submit">
-      </form>
+      <!-- <form @submit.prevent="submit"> -->
+      <template v-if="title.length >= 1" v-for="title in title">
+        <h4 class="box" v-on:click="increase()">+</h4>
+        <h2>{{title}} || {{timestamp}} || Score : {{point}}</h2>
+        <h4 class="box" v-on:click="decrease()">-</h4>
+      </template>
+      <textarea name="" id="" cols="30" rows="10" v-on:keyup.enter="submit"></textarea>
+      <!-- </form> -->
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
@@ -31,14 +33,29 @@
    const vm = new Vue({
       el: '.container',
       data: {
-          title: '',
-          description: ''
+          title: [],
+          description: '',
+          timestamp: '',
+          point: 0
       },
       computed: {
       },
       methods : {
-          submitForm: function(){
-            // console.log(this.title);
+          submit: function(event){
+            let text = event.target.value
+            // console.log(text);
+            this.title.push(text)
+            const today = new Date();
+            const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+            const dateTime = date
+            this.timestamp = dateTime;
+            event.target.value = ''
+          },
+          increase: function(){
+            this.point++
+          },
+          decrease: function(){
+            this.point--
           }
       }
   })
