@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .add__users{
+            border: 1px solid black;
+            padding: 5px;
+            width: 225px;
+            background-color: rgb(161, 161, 161);
+        }
+        .edit__users{
+            border: 1px solid black;
+            padding: 5px;
+            width: 225px;
+            background-color: rgb(161, 161, 161);
+        }
+        .edit__user{
+            display: inline-block;
+            border: 1px solid black;
+            padding: 5px;
+            width: 27px;
+            background-color: rgb(206, 200, 200);
+            cursor: pointer;
+        }
+        /* .delete__user{
+            display: inline-block;
+            border: 1px solid black;
+            padding: 5px;
+            width: 35px;
+            background-color: rgb(206, 200, 200);
+            cursor: pointer;
+        } */
+        .submit{
+            text-decoration: none;
+            color: black;
+            border: 1px solid black;
+            background-color: rgb(206, 200, 200);
+            padding: 2px;
+        }
+        .pad{
+            padding: 5px 5px;
+        }
+        .error{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">     
+        <main-component v-bind:items="users" v-bind:input="kelasbaru" v-bind:forms="box_input" v-on:hapus="hapus" v-on:submitname="submitname"></main-component>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+        Vue.component('main-component', {
+            props: ['items', 'forms', 'input'],
+            template: `<div>
+                <form v-on:submit.prevent="submitname">
+                    <input type="text" v-model="users.name" placeholder="Nama..">
+                    <button type="submit">{{forms}}</button>
+                    <div class="error" v-if="error.name">{{error.name}}</div>
+                </form>
+                <li v-for="(item,index) of items" class="pad">{{index + 1}}. {{item.name}}
+                    <a href="" class="submit" v-on:click.prevent="$emit('edit')">Edit</a> || 
+                    <a href="" class="submit" v-on:click.prevent="$emit('hapus', item.name)">Delete</a>
+                </li>
+                </div>`,
+            data: function(){
+                return {
+                    users: {
+                        name: ''
+                    },
+                    previewimg: '',
+                    error: {
+                        name: ''
+                    }
+                }
+            },
+            methods: {
+                submitForm: function(event){
+                    let text = event.target.value
+                    console.log(text);
+                },
+                submitname: function(){
+                    // console.log(this.users);
+                    this.error.name = ''
+                    if(this.users.name == ''){
+                        this.error.name = 'nama harus diisi'
+                        // console.log(this.error.name);
+                    }
+                    if(this.users.name){
+                        const data = {
+                            name: this.users.name
+                        }
+                        this.$emit('submitname', data)
+                        this.users.name = ''
+                        this.error.name = ''
+                    }
+                    
+                }
+            }
+        })
+        const vm = new Vue({
+            el: '.container',
+            data : {
+                users: [
+                        {
+                            'name' : 'Muhammmad Iqbal Mubarok'
+                        },
+                        {
+                            'name' : 'Ruby Purwanti'
+                        },
+                        {
+                            'name' : 'Faqih Muhammad'
+                        },
+                    ],
+                box_input : 'Add',
+                kelasbaru: "",
+            },
+            methods: {
+                hapus: function(name){
+                    // this.users.splice(index, 1)
+                    this.users = this.users.filter(item => item.name != name)
+                },
+                submitname: function(data){
+                    // console.log(data);
+                    this.users.push(data)
+                }
+            },
+            computed: {
+            }
+        })
+    </script>
+</body>
+</html>

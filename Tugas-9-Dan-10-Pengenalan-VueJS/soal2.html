@@ -18,14 +18,12 @@
 </head>
 <body>
   <div class="container">
-      <!-- <form @submit.prevent="submit"> -->
-      <template v-if="title.length >= 1" v-for="title in title">
-        <h4 class="box" v-on:click="increase()">+</h4>
-        <h2>{{title}} || {{timestamp}} || Score : {{point}}</h2>
-        <h4 class="box" v-on:click="decrease()">-</h4>
-      </template>
-      <textarea name="" id="" cols="30" rows="10" v-on:keyup.enter="submit"></textarea>
-      <!-- </form> -->
+    <template v-if="title.length >= 1" v-for="title in title">
+      <h4 class="box" v-on:click="increase()">+</h4>
+      <h2>{{title}} || {{timestamp}} || Score : {{point}}</h2>
+      <h4 class="box" v-on:click="decrease()">-</h4>
+    </template>
+    <textarea name="" id="" cols="30" rows="10" v-on:keyup.enter="submit"></textarea>
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
@@ -43,7 +41,6 @@
       methods : {
           submit: function(event){
             let text = event.target.value
-            // console.log(text);
             this.title.push(text)
             const today = new Date();
             const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
