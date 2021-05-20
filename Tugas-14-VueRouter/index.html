@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+        html {
+            font-family: 'Roboto', 'sans-serif';
+        }
+        #app{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100%;
+        }
+        a {
+            font: inherit;
+            padding: 0.5rem 2rem;
+            border: 1px solid salmon;
+            border-radius: 30px;
+            background-color: salmon;
+            color: white;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+        }    
+    </style>
+</head>
+<body>
+    <div id="app">
+        <router-link to="/">Home</router-link>
+        <router-link to="/user">Login</router-link>
+        <router-link to="/admin">Login With Admin</router-link>
+        <router-view></router-view>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        const Home = {template: '<div><h1>Halaman Home</h1></div>'};
+        const User = {template: '<div><h1>Halaman User</h1></div>'};
+        const Admin = {template: '<div><h1>Halaman Admin</h1></div>'};
+
+        const routes = [
+            {path: '/', component: Home, alias: '/home'},
+            {path: '/user', component: User, meta: {login: true}},
+            {path: '/admin', component: Admin, meta: {login: true, admin: true}},
+            {path: '*', redirect: '/home'}
+        ]
+
+        const router = new VueRouter({
+            routes
+        });
+
+        const user = {
+            login: true,
+            admin: false
+        }
+
+        router.beforeEach((to, from, next) => {
+            if(to.matched.some(record => record.meta.login)){
+                let auth = user.login
+                if(!auth){
+                    swal("Halo, silahkan login terlebih dahulu :)");
+                    next(false)
+                }else{
+                    next()
+                }
+            }else{
+                next()
+            }
+        });
+
+        router.beforeEach((to, from, next) => {
+            if(to.matched.some(record => record.meta.admin)){
+                let role = user.admin
+                if(!role){
+                    swal("Dilarang masuk, anda bukan admin!");
+                    next(false)
+                }else{
+                    next()
+                }
+            }else{
+                next()
+            }
+        });
+
+        var vm = new Vue({ 
+            el: '#app', 
+            router, 
+        })
+    </script>
+</body>
+</html>
