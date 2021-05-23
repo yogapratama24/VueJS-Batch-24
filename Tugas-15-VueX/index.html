@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
+        html {
+            font-family: 'Roboto', 'sans-serif';
+        }
+        tbody{
+            text-align: center;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        thead{
+            background-color: #1d3557;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <form @submit.prevent="submitForm()">
+            <p v-if="errors.length">
+                <b>Please correct the following errors : </b>
+                <ul>
+                    <li v-for="error in errors">{{error}}</li>
+                </ul>
+            </p>
+            <label>Name : </label>
+            <br>
+            <input type="text" :disabled="buttonStatus == 'upload'" name="name" ref="name" v-model="name">
+            <br>
+            <label>Address : </label>
+            <br>
+            <input type="text" :disabled="buttonStatus == 'upload'" name="address" ref="address" v-model="address">
+            <br>
+            <label>Nomor HP : </label>
+            <br>
+            <input type="number" :disabled="buttonStatus == 'upload'" name="no_hp" ref="no_hp" v-model="no_hp">
+            <br>
+            <div v-if="buttonStatus == 'submit'">
+                <input type="submit" value="SUBMIT">
+            </div>
+        </form>
+        <br><br>
+    </div>
+
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vuex"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module">
+        import { MembersComponent} from './MembersComponent.js'
+        const store = new Vuex.Store({
+            state: {
+                name: '',
+                address: '',
+                no_hp: '',
+                counter: 0,
+                buttonStatus: 'submit',
+            },
+            mutations: {
+                increment(state){
+                    state.counter++
+                },
+                validationForm(state){
+                    state.errors = []
+                    if(state.name.length < 5){
+                        state.errors.push('Title minimal 5 karakter')
+                        this.$refs.name.focus()
+                    }
+                    if(state.address.length >= 30){
+                        state.errors.push('Address tidak boleh melebihi dari 30 karakter')
+                        // this.$refs.address.focus()
+                    }
+                    if(state.no_hp.length === 0){
+                        state.errors.push('no hp tidak boleh kosong')
+                        // this.$refs.no_hp.focus()
+                    }
+                },
+                getBlogs(state){
+                    const config = {
+                        method : 'get',
+                        url: 'http://demo-api-vue.sanbercloud.com/api/member'
+                    }
+
+                    axios(config)
+                        .then( (response) => {
+                            state.members = response.data.members 
+                            console.log(response.data.members);
+                        })
+                        .catch( (error) => {
+                            console.log(error);
+                        })
+                },
+                clearForm(state){
+                    state.name = ''
+                    state.address = ''
+                    state.no_hp = ''
+                    state.buttonStatus = 'submit'
+                    state.idEditMember = null
+                    state.idUploadMember = null
+                },
+                submitForm(state){
+                    this.validationForm()
+                    if(state.errors.length === 0){
+                        let formData = new FormData()
+                        formData.append('name', state.name)
+                        formData.append('address', state.address)
+                        formData.append('no_hp', state.no_hp)
+                        const config = {
+                        method : 'post',
+                        url: 'http://demo-api-vue.sanbercloud.com/api/member',
+                        data: formData
+                        }
+
+                        axios(config)
+                            .then( (response) => {
+                                this.clearForm()
+                                this.getBlogs()
+                                alert(response.data.message)
+                            })
+                            .catch( (error) => {
+                                console.log(error);
+                            })
+                    }
+                },
+            }
+        })
+
+        const vm = new Vue({
+            el: '#app',
+            // components: {'members-component' :  MembersComponent},
+            store,
+            methods: {
+                increment(){
+                    store.commit('increment')
+                },
+                errors(){
+                    return store.state.errors
+                },
+                buttonStatus(){
+                    return store.state.buttonStatus
+                },
+                getBlogs(){
+                    store.commit('getBlogs')
+                },
+                clearForm(){
+                    store.commit('clearForm')
+                },
+                validationForm(){
+                    store.commit('validationForm')
+                },
+                submitForm(){
+                    store.commit('submitForm')
+                }
+            },
+            created(){
+                this.getBlogs()
+            }
+        })
+    </script>
+</body>
+</html>
