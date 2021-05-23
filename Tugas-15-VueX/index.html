@@ -132,6 +132,20 @@
                             })
                     }
                 },
+                name(state){
+                    return state.name
+                }
+            },
+            getters: {
+                name(state){
+                    return state.name
+                },
+                address(state){
+                    return state.adress
+                },
+                no_hp(state){
+                    return state.no_hp
+                },
             }
         })
 
@@ -160,7 +174,22 @@
                 },
                 submitForm(){
                     store.commit('submitForm')
-                }
+                },
+                // name(){
+                //     // return this.$store.getters.name
+                //     store.commit('name')
+                // }
+            },
+            computed: {
+                name(){
+                    return this.$store.getters.name
+                },
+                address(){
+                    return this.$store.getters.address
+                },
+                no_hp(){
+                    return this.$store.getters.no_hp
+                },
             },
             created(){
                 this.getBlogs()
